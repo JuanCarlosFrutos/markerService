@@ -10,7 +10,6 @@
     "async": "^2.1.4",
     "express": "~4.14.0",
     "fs": "0.0.1-security",
-    "images": "3.0.0",
     "jimp": "^0.2.27",
     "mocha": "^3.2.0",
     "phantomjs-prebuilt": "2.1.14",
