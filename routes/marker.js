@@ -12,13 +12,12 @@ var path = require("path");
 var fs = require("fs");
 
 /* GET users listing. */
-router.get("/:id", function (req, res, next) {
+router.get("/:text", function (req, res, next) {
 
-    //check correct id
+    //check correct text
     var reg  = /^.{0,5}$/;
-    if(!reg.test(req.params.id)) {
-        var err = new Error("Id maximum length is 5 ");
-        //res.send(JSON.stringify({error:"incorrect params"});
+    if(!reg.test(req.params.text)) {
+        var err = new Error("text maximum length is 5 ");
          err.status = 404;
          next(err);
          return;
@@ -46,7 +45,7 @@ router.get("/:id", function (req, res, next) {
         }],
 
         createTextImg: function (cb) {
-            marker.createTextImg(req.params.id, "markerLetters.fnt", function (err,path) {
+            marker.createTextImg(req.params.text, "markerLetters.fnt", function (err,path) {
                 path !== null ? cb(null,path) : cb("createTextImg",null);
             });
         },
@@ -59,7 +58,6 @@ router.get("/:id", function (req, res, next) {
 
     }, function (err, results) {
         if (err) {
-            //res.send(JSON.stringify(err));
              err = new Error(err);
              err.status = 404;
              next(err);

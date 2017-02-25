@@ -139,21 +139,11 @@ module.exports = {
      * @param {function} cb callback
      */
     combinePngs: function (pngMarker, pngText, cb) {
-        //check val max width.
-        // if (widthMarker > 300){
-        //     cb(null)
-        //     return
-        // }
+
         if(!(fs.existsSync(pngMarker) && fs.existsSync(pngText))){
             cb("Png file doesn't exist",null);
             return null;
         }
-        //check files exist.
-
-       // im(pngMarker)
-       //     .resize(widthMarker)
-       //     .save(pngMarker)
-       // ;
 
         var marker = Jimp.read(pngMarker);
         var text = Jimp.read(pngText);
