@@ -8,9 +8,6 @@
   },
   "dependencies": {
     "async": "^2.1.4",
-    "chai": "^3.5.0",
-    "debug": "~2.2.0",
-    "ejs": "~2.5.2",
     "express": "~4.14.0",
     "fs": "0.0.1-security",
     "images": "3.0.0",
