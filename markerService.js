@@ -9,7 +9,7 @@ var express = require("express");
 var Jimp = require("jimp");
 var async = require("async");
 var path = require("path");
-var im = require("images");
+var sizeOf = require("image-size");
 var svg_to_png = require("svg-to-png");
 var fs = require("fs");
 var DOMParser = require("xmldom").DOMParser;
@@ -152,21 +152,28 @@ module.exports = {
             var marker = images[0];
             var text = images[1];
 
-            var heightMarker = im(pngMarker).size().height;
-            var widthMarker = im(pngMarker).size().width;
-            var widthText = widthMarker;
-            var heightText = heightMarker / 5;
-            text.autocrop(function (err) {
-                if (err) {
-                    cb(err,null);
-                    return null
-                }
-                text.contain(widthText, heightText, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE);
-                marker.composite(text,
-                    widthMarker / 2 - widthText / 2, heightMarker / 3 - heightText / 2);
-                marker.write(path.join(__dirname, "marker.png"));
-                cb("",path.join(__dirname, "marker.png"));
-            });
+            sizeOf(pngMarker, function (err, dimensions) {
+                    if (err){
+                        cb(err,null);
+                        return null;
+                    }
+                    var heightMarker = dimensions.height;
+                    var widthMarker = dimensions.width;
+                    var widthText = widthMarker;
+                    var heightText = heightMarker / 5;
+                    text.autocrop(function (err) {
+                        if (err) {
+                            cb(err,null);
+                            return null
+                        }
+                        text.contain(widthText, heightText, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE);
+                        marker.composite(text,
+                            widthMarker / 2 - widthText / 2, heightMarker / 3 - heightText / 2);
+                        marker.write(path.join(__dirname, "marker.png"));
+                        cb("",path.join(__dirname, "marker.png"));
+                    });
+                });
+
         }).catch(function (err) {
             if (err) {
                 cb(err,null);

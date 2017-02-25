@@ -52,7 +52,7 @@ router.get("/:text", function (req, res, next) {
 
         combinePngs: ["createTextImg", "convertSvgToPng", function (result,cb) {
             marker.combinePngs(result.convertSvgToPng, result.createTextImg, function (err,path) {
-                path !== null ? cb(null,path) : cb("combinePngs",null);
+                path !== null ? cb(null,path) : cb(err,null);
             });
         }],
 
