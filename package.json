@@ -8,9 +8,7 @@
   },
   "dependencies": {
     "async": "^2.1.4",
-    "body-parser": "~1.15.2",
     "chai": "^3.5.0",
-    "cookie-parser": "~1.4.3",
     "debug": "~2.2.0",
     "ejs": "~2.5.2",
     "express": "~4.14.0",
@@ -18,9 +16,7 @@
     "images": "3.0.0",
     "jimp": "^0.2.27",
     "mocha": "^3.2.0",
-    "morgan": "~1.7.0",
     "phantomjs-prebuilt": "2.1.14",
-    "serve-favicon": "~2.3.0",
     "svg-to-png": "3.1.2",
     "xmldom": "^0.1.27"
   }
