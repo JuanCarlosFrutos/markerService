@@ -41,6 +41,7 @@ module.exports = {
 
         fs.readFile(svg, "utf8", function (err, data) {
             if (err) {
+                console.log(err,data);
                 cb("Error reading file svg",null);
                 return;
             }
@@ -59,13 +60,13 @@ module.exports = {
             marker.setAttribute("width", newWidth+"px");
             marker.setAttribute("height", newHeight+"px");
             var newSvgFile = new XMLSerializer().serializeToString(svgFile);
-            fs.writeFile("marker.svg", newSvgFile, function (err) {
+            fs.writeFile(svg, newSvgFile, function (err) {
                 if (err) {
                     cb("Error writting file svg",null);
                     return null;
                 }
             });
-            cb("",path.join(__dirname, "marker.svg"));
+            cb("",svg);
         });
 
     },
@@ -169,8 +170,8 @@ module.exports = {
                         text.contain(widthText, heightText, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE);
                         marker.composite(text,
                             widthMarker / 2 - widthText / 2, heightMarker / 3 - heightText / 2);
-                        marker.write(path.join(__dirname, "marker.png"));
-                        cb("",path.join(__dirname, "marker.png"));
+                        marker.write(pngMarker);
+                        cb("",pngMarker);
                     });
                 });
 

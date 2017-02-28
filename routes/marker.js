@@ -11,8 +11,14 @@ var async = require("async");
 var path = require("path");
 var fs = require("fs");
 
+
+
+
 /* GET users listing. */
 router.get("/:text", function (req, res, next) {
+
+    var pathSvg = path.join(__dirname, 'marker.svg');
+    var pathFont = path.join(__dirname, 'markerLetters.fnt');
 
     //check correct text
     var reg  = /^.{0,5}$/;
@@ -33,7 +39,7 @@ router.get("/:text", function (req, res, next) {
     var colour = req.query.colour;
     async.auto({
         changeAttr: function (cb) {
-            marker.changeAttr(colour,parseInt(width),"marker.svg", function (err,path) {
+            marker.changeAttr(colour,parseInt(width),pathSvg, function (err,path) {
                 path !== null ? cb(null,path) : cb(err,null);
             });
         },
@@ -45,7 +51,7 @@ router.get("/:text", function (req, res, next) {
         }],
 
         createTextImg: function (cb) {
-            marker.createTextImg(req.params.text, "markerLetters.fnt", function (err,path) {
+            marker.createTextImg(req.params.text,pathFont, function (err,path) {
                 path !== null ? cb(null,path) : cb("createTextImg",null);
             });
         },
