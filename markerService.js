@@ -60,13 +60,18 @@ module.exports = {
             marker.setAttribute("width", newWidth+"px");
             marker.setAttribute("height", newHeight+"px");
             var newSvgFile = new XMLSerializer().serializeToString(svgFile);
-            fs.writeFile(svg, newSvgFile, function (err) {
+            var filename = svg.replace(/^.*[\\\/]/, "");
+            filename = filename.replace(".svg","");
+            filename = filename + "_" + colour + "_" + newWidth;
+            filename = filename + ".svg";
+            var pathFile = path.join(__dirname, filename);
+            fs.writeFile(pathFile, newSvgFile, function (err) {
                 if (err) {
                     cb("Error writting file svg",null);
                     return null;
                 }
+                cb("",pathFile);
             });
-            cb("",svg);
         });
 
     },
@@ -89,6 +94,7 @@ module.exports = {
             .then(function () {
                 var filename = svg.replace(/^.*[\\\/]/, "");
                 filename = filename.replace(".svg",".png");
+                fs.unlink(svg);
                 cb("",path.join(__dirname, filename));
             }).catch(function (err) {
             if (err) {
@@ -119,8 +125,10 @@ module.exports = {
                         cb(err,null);
                         return
                     }
-                    image.write(path.join(__dirname, "text.png"));
-                    cb("",path.join(__dirname, "text.png"));
+                    var fileName = text.replace("-", "_") + ".png";
+                    image.write(path.join(__dirname, fileName), function () {
+                        cb("",path.join(__dirname, fileName));
+                    });
                 });
             }).catch(function (err) {
                 if (err) {
@@ -170,8 +178,18 @@ module.exports = {
                         text.contain(widthText, heightText, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE);
                         marker.composite(text,
                             widthMarker / 2 - widthText / 2, heightMarker / 3 - heightText / 2);
-                        marker.write(pngMarker);
-                        cb("",pngMarker);
+                        var fileNameText = pngText.replace(/^.*[\\\/]/, "");
+                        var fileNameColourWidth = pngMarker.replace(/^.*[\\\/]/, "");;
+                        fileNameColourWidth = fileNameColourWidth.replace(".png","");
+                        var fileName = fileNameColourWidth + "_" +  fileNameText;
+                        //delete temp files
+                        fs.unlink(pngMarker);
+                        fs.unlink(pngText);
+                        //save in cache
+                        var pathFile = path.join(__dirname, "cache" ,fileName)
+                        marker.write(pathFile, function () {
+                            cb("",pathFile);
+                        });
                     });
                 });
 

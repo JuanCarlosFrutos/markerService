@@ -17,8 +17,8 @@ var fs = require("fs");
 /* GET users listing. */
 router.get("/:text", function (req, res, next) {
 
-    var pathSvg = path.join(__dirname, 'marker.svg');
-    var pathFont = path.join(__dirname, 'markerLetters.fnt');
+    var pathSvg = path.join(__dirname, '..' , 'assets' ,'marker.svg');
+    var pathFont = path.join(__dirname, '..' , 'assets', 'markerLetters.fnt');
 
     //check correct text
     var reg  = /^.{0,5}$/;
@@ -37,43 +37,55 @@ router.get("/:text", function (req, res, next) {
     }
     var width = req.query.width;
     var colour = req.query.colour;
-    async.auto({
-        changeAttr: function (cb) {
-            marker.changeAttr(colour,parseInt(width),pathSvg, function (err,path) {
-                path !== null ? cb(null,path) : cb(err,null);
-            });
-        },
 
-        convertSvgToPng: ["changeAttr", function (result,cb) {
-            marker.convertSvgToPng(result.changeAttr,function (err,path) {
-                path !== null ? cb(null,path) : cb("Incorrect convertSvgToPng",null);
-            });
-        }],
+    var fileName = "marker" + "_" + colour + "_" + width + "_" + req.params.text.replace("-", "_") +  ".png";
+    var pathCache = path.join(__dirname, "..", "cache", fileName );
 
-        createTextImg: function (cb) {
-            marker.createTextImg(req.params.text,pathFont, function (err,path) {
-                path !== null ? cb(null,path) : cb("createTextImg",null);
-            });
-        },
-
-        combinePngs: ["createTextImg", "convertSvgToPng", function (result,cb) {
-            marker.combinePngs(result.convertSvgToPng, result.createTextImg, function (err,path) {
-                path !== null ? cb(null,path) : cb(err,null);
-            });
-        }],
-
-    }, function (err, results) {
-        if (err) {
-             err = new Error(err);
-             err.status = 404;
-             next(err);
-            return;
-        }
+    if(fs.existsSync(pathCache)){
+        console.log("Existe");
         res.status(201);
-        setTimeout(function () {
-           res.sendFile(results.combinePngs);
-        }, 1000);
-    });
+        res.sendFile(pathCache);
+    }
+
+        async.auto({
+
+
+            changeAttr: function (cb) {
+                marker.changeAttr(colour, parseInt(width), pathSvg, function (err, path) {
+                    path !== null ? cb(null, path) : cb(err, null);
+                });
+            },
+
+            convertSvgToPng: ["changeAttr", function (result, cb) {
+                marker.convertSvgToPng(result.changeAttr, function (err, path) {
+                    path !== null ? cb(null, path) : cb(err, null);
+                });
+            }],
+
+            createTextImg: function (cb) {
+                marker.createTextImg(req.params.text, pathFont, function (err, path) {
+                    path !== null ? cb(null, path) : cb(err, null);
+                });
+            },
+
+            combinePngs: ["createTextImg", "convertSvgToPng", function (result, cb) {
+                marker.combinePngs(result.convertSvgToPng, result.createTextImg, function (err, path) {
+                    path !== null ? cb(null, path) : cb(err, null);
+                });
+            }],
+
+        }, function (err, results) {
+            if (err) {
+                err = new Error(err);
+                err.status = 404;
+                next(err);
+                return;
+            }
+            res.status(201);
+            res.sendFile(results.combinePngs);
+        });
 });
+
+
 
 module.exports = router;
