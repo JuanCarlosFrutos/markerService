@@ -38,12 +38,23 @@ router.get("/:text", function (req, res, next) {
     var width = req.query.width;
     var colour = req.query.colour;
 
-    var fileName = "marker" + "_" + colour + "_" + width + "_" + req.params.text.replace("-", "_") +  ".png";
-    var pathCache = path.join(__dirname, "..", "cache", fileName );
+    //if cache doesnt exist it will be created.
 
-    if(fs.existsSync(pathCache)){
+
+    var pathCache =  path.join(__dirname, "..", "cache");
+    var fileName = "marker" + "_" + colour + "_" + width + "_" + req.params.text.replace("-", "_") +  ".png";
+    console.log(fileName);
+    var pathImage =path.join(pathCache, fileName);
+
+
+    if(!fs.existsSync(pathCache)){
+        fs.mkdirSync(pathCache);
+    }
+
+    if(fs.existsSync(pathImage)){
         res.status(201);
-        res.sendFile(pathCache);
+        res.sendFile(pathImage);
+        return;
     }
 
         async.auto({
