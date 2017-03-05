@@ -23,16 +23,17 @@ router.get("/:text", function (req, res, next) {
     //check correct text
     var reg  = /^.{0,5}$/;
     if(!reg.test(req.params.text)) {
-        var err = new Error("text maximum length is 5 ");
-         err.status = 404;
-         next(err);
+         var err = new Error("text maximum length is 5 ");
+         res.status(404);
+         res.json({ error: err.message })
          return;
     }
+
     //check get parameters
     if (req.query.colour === undefined || req.query.width === undefined ) {
         err = new Error("Colour or width undefined");
-         err.status = 404;
-         next(err);
+         res.status(404);
+         res.json({ error: err.message })
          return;
     }
     var width = req.query.width;
@@ -43,7 +44,6 @@ router.get("/:text", function (req, res, next) {
 
     var pathCache =  path.join(__dirname, "..", "cache");
     var fileName = "marker" + "_" + colour + "_" + width + "_" + req.params.text.replace("-", "_") +  ".png";
-    console.log(fileName);
     var pathImage =path.join(pathCache, fileName);
 
 
@@ -86,13 +86,12 @@ router.get("/:text", function (req, res, next) {
 
         }, function (err, results) {
             if (err) {
-                err = new Error(err);
-                err.status = 404;
-                next(err);
-                return;
+                res.status(404);
+                res.json({ error: err })
+            }else{
+                res.status(201);
+                res.sendFile(results.combinePngs);
             }
-            res.status(201);
-            res.sendFile(results.combinePngs);
         });
 });
 
