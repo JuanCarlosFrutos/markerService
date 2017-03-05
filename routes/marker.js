@@ -42,7 +42,6 @@ router.get("/:text", function (req, res, next) {
     var pathCache = path.join(__dirname, "..", "cache", fileName );
 
     if(fs.existsSync(pathCache)){
-        console.log("Existe");
         res.status(201);
         res.sendFile(pathCache);
     }

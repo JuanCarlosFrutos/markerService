@@ -94,8 +94,9 @@ module.exports = {
             .then(function () {
                 var filename = svg.replace(/^.*[\\\/]/, "");
                 filename = filename.replace(".svg",".png");
-                fs.unlink(svg);
-                cb("",path.join(__dirname, filename));
+                fs.unlink(svg, function(){
+                    cb("",path.join(__dirname, filename));
+                });
             }).catch(function (err) {
             if (err) {
                 cb(err,null);
@@ -183,12 +184,14 @@ module.exports = {
                         fileNameColourWidth = fileNameColourWidth.replace(".png","");
                         var fileName = fileNameColourWidth + "_" +  fileNameText;
                         //delete temp files
-                        fs.unlink(pngMarker);
-                        fs.unlink(pngText);
-                        //save in cache
-                        var pathFile = path.join(__dirname, "cache" ,fileName)
-                        marker.write(pathFile, function () {
-                            cb("",pathFile);
+                        fs.unlink(pngMarker, function(){
+                            fs.unlink(pngText, function () {
+                                //save in cache
+                                var pathFile = path.join(__dirname, "cache" ,fileName)
+                                marker.write(pathFile, function () {
+                                    cb("",pathFile);
+                                });
+                            });
                         });
                     });
                 });
