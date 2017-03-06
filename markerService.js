@@ -94,12 +94,8 @@ module.exports = {
             .then(function () {
                 var filename = svg.replace(/^.*[\\\/]/, "");
                 filename = filename.replace(".svg", ".png");
-
-                Promise.all([filename]).then(function () {
-                    fs.unlink(svg, function () {
-                        cb("", path.join(__dirname, filename));
-                    });
-
+                fs.unlink(svg, function () {
+                    cb("", path.join(__dirname, filename));
                 });
             }).catch(function (err) {
             if (err) {
@@ -152,7 +148,7 @@ module.exports = {
      * @param {int} widthMarker width that you want in final image
      * @param {function} cb callback
      */
-    combinePngs: function (pngMarker, pngText, cb) {
+    combinePngs: function (pngMarker, pngText, fileName, cb) {
 
         if (!(fs.existsSync(pngMarker) && fs.existsSync(pngText))) {
             cb("Png file doesn't exist", null);
@@ -181,13 +177,11 @@ module.exports = {
                         return null
                     }
                     text.contain(widthText, heightText, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE);
-                    marker.composite(text,
-                        widthMarker / 2 - widthText / 2, heightMarker / 3 - heightText / 2);
-                    var fileNameText = pngText.replace(/^.*[\\\/]/, "");
-                    var fileNameColourWidth = pngMarker.replace(/^.*[\\\/]/, "");
-                    ;
-                    fileNameColourWidth = fileNameColourWidth.replace(".png", "");
-                    var fileName = fileNameColourWidth + "_" + fileNameText;
+                    //put text center in marker
+                    var widthPosition  = widthMarker / 2 - widthText / 2
+                    var heightPosition = heightMarker / 3 - heightText / 2
+
+                    marker.composite(text, widthPosition, heightPosition);
                     //delete temp files
                     fs.unlink(pngMarker, function () {
                         fs.unlink(pngText, function () {

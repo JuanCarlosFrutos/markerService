@@ -17,8 +17,6 @@ var fs = require("fs");
 /* GET users listing. */
 router.get("/:text", function (req, res, next) {
 
-    var pathSvg = path.join(__dirname, '..' , 'assets' ,'marker.svg');
-    var pathFont = path.join(__dirname, '..' , 'assets', 'markerLetters.fnt');
 
     //check correct text
     var reg  = /^.{0,5}$/;
@@ -36,17 +34,17 @@ router.get("/:text", function (req, res, next) {
          res.json({ error: err.message })
          return;
     }
+
+    var pathSvg = path.join(__dirname, '..' , 'assets' ,'marker.svg');
+    var pathFont = path.join(__dirname, '..' , 'assets', 'markerLetters.fnt');
     var width = req.query.width;
     var colour = req.query.colour;
-
-    //if cache doesnt exist it will be created.
-
-
     var pathCache =  path.join(__dirname, "..", "cache");
     var fileName = "marker" + "_" + colour + "_" + width + "_" + req.params.text.replace("-", "_") +  ".png";
     var pathImage =path.join(pathCache, fileName);
 
 
+    //if cache doesnt exist it will be created
     if(!fs.existsSync(pathCache)){
         fs.mkdirSync(pathCache);
     }
@@ -79,7 +77,7 @@ router.get("/:text", function (req, res, next) {
             },
 
             combinePngs: ["createTextImg", "convertSvgToPng", function (result, cb) {
-                marker.combinePngs(result.convertSvgToPng, result.createTextImg, function (err, path) {
+                marker.combinePngs(result.convertSvgToPng, result.createTextImg, fileName, function (err, path) {
                     path !== null ? cb(null, path) : cb(err, null);
                 });
             }],
